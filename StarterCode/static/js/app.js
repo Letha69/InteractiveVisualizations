@@ -102,13 +102,14 @@ d3.json("./samples.json").then((bbData) =>{
 
     var trace3 = [{
       domain: {x: [0, 1], y: [0,1]},
+      value: washFrequency,
+      title: { text: "Belly Button Washes Per Week" },     
       type: "indicator",
       mode: "gauge+number",
-      value: washFrequency,
-      title: { text: "Belly Button Washes Per Week" },
+
       gauge: {
         axis: { range: [0, 9], tickwidth: 0.5, tickcolor: "black" },
-        bar: { color: "#669999" },
+        bar: { color: "darkgreen" },
         bgcolor: "white",
         borderwidth: 2,
         bordercolor: "transparent",
@@ -138,7 +139,6 @@ d3.json("./samples.json").then((bbData) =>{
     Plotly.newPlot("gauge", gaugeData, layout);
 
   }
-
   // On button click, call refreshData()
   d3.selectAll("#selDataset").on("change", refreshData);
 
