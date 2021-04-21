@@ -114,15 +114,15 @@ d3.json("./samples.json").then((bbData) =>{
         borderwidth: 2,
         bordercolor: "transparent",
         steps: [
-          { range: [0, 1], color: "#fff" },
-          { range: [1, 2], color: "#e6fff5" },
-          { range: [2, 3], color: "ccffeb" },
-          { range: [3, 4], color: "b3ffe0" },
-          { range: [4, 5], color: "#99ffd6" },
-          { range: [5, 6], color: "#80ffcc" },
-          { range: [6, 7], color: "#66ffc2" },
-          { range: [7, 8], color: "#4dffb8" },
-          { range: [8, 9], color: "#33ffad" }
+          { range: [0, 1], color: "rgb(39,215,74" },
+          { range: [1, 2], color: "rgb(39,215,109" },
+          { range: [2, 3], color: "rgb(39,215,148" },
+          { range: [3, 4], color: "rgb(39,215,177" },
+          { range: [4, 5], color: "rgb(39,215,212" },
+          { range: [5, 6], color: "rgb(39,180,215" },
+          { range: [6, 7], color: "rgb(39,148,215" },
+          { range: [7, 8], color: "rgb(39,118,215" },
+          { range: [8, 9], color: "rgb(39,92,215" }
 
         ],
       }
