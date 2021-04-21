@@ -1,4 +1,3 @@
-
 d3.json("./samples.json").then((bbData) =>{
       console.log(bbData);
     var data = bbData;
