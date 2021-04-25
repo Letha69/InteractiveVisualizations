@@ -1,34 +1,32 @@
-
-function buildData(sample){
-  d3.json("./samples.json").then((bbData) =>{
-    //console.log(bbData);
+function buildMetadata(sample) {
+  d3.json("./data/samples.json").then((bbData) => {
     var data = bbData.metadata;
     // Filter the data for the object with the desired sample number
     var resultArray = data.filter(sampleObj => sampleObj.id == sample);
     var result = resultArray[0];
+    // Use d3 to select the panel with id of `#sample-metadata`
+    var PANEL = d3.select("#sample-metadata");
 
-    //  Demographic Data 
-    var demoKeys = Object.keys(data.metadata[index]);
-    var demoValues = Object.values(data.metadata[index])
-    var demographicData = d3.select('#sample-metadata');
+    // Use `.html("") to clear any existing metadata
+    PANEL.html("");
 
-    // clear demographic data
-    demographicData.html("");
+    // Use `Object.entries` to add each key and value pair to the panel
+    // Hint: Inside the loop, you will need to use d3 to append new
+    // tags for each key-value in the metadata.
     Object.entries(result).forEach(([key, value]) => {
       PANEL.append("h6").text(`${key.toUpperCase()}: ${value}`);
     });
-
-
+    
     // BONUS: Build the Gauge Chart
     buildGauge(result.wfreq);
   });
 }
 
 function buildChart(sample){
-  d3.json("./samples.json").then((bbData)=>{
-    var sample = bbData.samples;
+  d3.json("./data/samples.json").then((bbData)=>{
+    var samples = bbData.samples;
     // Filter the data for the object with the desired sample number
-    var resultArray = sample.filter(sampleObj => sampleObj.id == sample);
+    var resultArray = samples.filter(sampleObj => sampleObj.id == sample);
     var result = resultArray[0];
 
     var otuId = result.otu_ids;
@@ -105,7 +103,7 @@ function init(){
   var selector = d3.select("#selDataset");
 
   // Use the list of sample names to populate the select options
-  d3.json("./samples.json").then((bbData)=>{
+  d3.json("./data/samples.json").then((bbData)=>{
     var sampleNames = bbData.names;
 
     sampleNames.forEach((sample) => {
@@ -117,13 +115,13 @@ function init(){
 
     // Use the first sample from the list to build the initial plots
     var firstSample = sampleNames[0];
-    buildCharts(firstSample);
+    buildChart(firstSample);
     buildMetadata(firstSample);
   }); 
 }
 function optionChanged(newSample) {
   // Fetch new data each time a new sample is selected
-  buildCharts(newSample);
+  buildChart(newSample);
   buildMetadata(newSample);
 }
 
