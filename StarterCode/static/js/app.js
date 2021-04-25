@@ -1,28 +1,11 @@
-d3.json("./samples.json").then((bbData) =>{
-      console.log(bbData);
-    var data = bbData;
 
-    var idList = data.names;
-    for (var i = 0; i< idList.length; i++){
-        selectBox = d3.select("#selDataset");
-        selectBox.append("option").text(idList[i]);
-        
-    }
-    // Set up default plot
-  updatePlots(0)
-
-   
-  function updatePlots(index) {
-
-    // horizontal bar chart & gauge chart
-    var sample = data.samples[index].otu_ids;
-    console.log(sample);
-    var sampleValues = data.samples[index].sample_values;
-    var otuLabels = data.samples[index].otu_labels;
-
-    var washFrequency = data.metadata[+index].wfreq;
-    console.log(washFrequency);
-
+function buildData(sample){
+  d3.json("./samples.json").then((bbData) =>{
+    //console.log(bbData);
+    var data = bbData.metadata;
+    // Filter the data for the object with the desired sample number
+    var resultArray = data.filter(sampleObj => sampleObj.id == sample);
+    var result = resultArray[0];
 
     //  Demographic Data 
     var demoKeys = Object.keys(data.metadata[index]);
@@ -31,12 +14,57 @@ d3.json("./samples.json").then((bbData) =>{
 
     // clear demographic data
     demographicData.html("");
+    Object.entries(result).forEach(([key, value]) => {
+      PANEL.append("h6").text(`${key.toUpperCase()}: ${value}`);
+    });
 
-    for (var i = 0; i < demoKeys.length; i++) {
 
-      demographicData.append("p").text(`${demoKeys[i]}: ${demoValues[i]}`);
+    // BONUS: Build the Gauge Chart
+    buildGauge(result.wfreq);
+  });
+}
+
+function buildChart(sample){
+  d3.json("./samples.json").then((bbData)=>{
+    var sample = bbData.samples;
+    // Filter the data for the object with the desired sample number
+    var resultArray = sample.filter(sampleObj => sampleObj.id == sample);
+    var result = resultArray[0];
+
+    var otuId = result.otu_ids;
+    var sampleValues = result.sample_values;
+    var otuLabels = result.otu_labels;
+
+
+    // The bubble chart 
+
+    // Set up trace
+    trace2 = {
+      x: sample,
+      y: sampleValues,
+      text: otuLabels,
+      mode: 'markers',
+      marker: {
+        color: otuId,
+        opacity: [1, 0.8, 0.6, 0.4],
+        size: sampleValues
+      }
+    }
+
+    var bubbleData = [trace2];
+
+    var layout = {
+      title: 'OTU Frequency',
+      margin:{t: 0},
+      hovermode:"closest",
+      xaxis:{title:"OTU ID"},
+      margin: {t:30}
     };
 
+      // create the bubble plot
+    Plotly.newPlot("bubble", bubbleData, layout);
+
+    //horizontal bar chart
 
     // Top 10 data for horizontal bar chart
     var otuTop10 = sample.slice(0, 10).reverse();
@@ -54,108 +82,50 @@ d3.json("./samples.json").then((bbData) =>{
       type: "bar",
       orientation: "h"
     };
-
+    
     // create layout variable to set plots layout
     var barData = [trace1];
-
+    
     var layout = {
       title: "Top 10 OTUs",
       margin: {
-        l: 75,
-        r: 75,
-        t: 75,
-        b: 50
+        l: 150,
+        t: 30
       }
     };
-
+    
     // create the bar plot
-    Plotly.newPlot("bar", barData, layout);
+    Plotly.newPlot("bar", barData, layout);   
 
-   // The bubble chart 
+  });
+} 
+function init(){
+ 
+  // Grab a reference to the dropdown select element
+  var selector = d3.select("#selDataset");
 
-    // Set up trace
-    trace2 = {
-      x: sample,
-      y: sampleValues,
-      text: otuLabels,
-      mode: 'markers',
-      marker: {
-        color: sample,
-        opacity: [1, 0.8, 0.6, 0.4],
-        size: sampleValues
-      }
-    }
+  // Use the list of sample names to populate the select options
+  d3.json("./samples.json").then((bbData)=>{
+    var sampleNames = bbData.names;
 
-    var bubbleData = [trace2];
+    sampleNames.forEach((sample) => {
+      selector
+        .append("option")
+        .text(sample)
+        .property("value", sample);
+    });
 
-    var layout = {
-      title: 'OTU Frequency',
-      showlegend: false,
-      height: 600,
-      width: 930
-    }
+    // Use the first sample from the list to build the initial plots
+    var firstSample = sampleNames[0];
+    buildCharts(firstSample);
+    buildMetadata(firstSample);
+  }); 
+}
+function optionChanged(newSample) {
+  // Fetch new data each time a new sample is selected
+  buildCharts(newSample);
+  buildMetadata(newSample);
+}
 
-      // create the bubble plot
-    Plotly.newPlot("bubble", bubbleData, layout)
-
-    // Gauge chart
-
-    var trace3 = [{
-      domain: {x: [0, 1], y: [0,1]},
-      value: washFrequency,
-      title: { text: "Belly Button Washes Per Week" },     
-      type: "indicator",
-      mode: "gauge+number",
-
-      gauge: {
-        axis: { range: [0, 9], tickwidth: 0.5, tickcolor: "black" },
-        bar: { color: "darkgreen" },
-        bgcolor: "white",
-        borderwidth: 2,
-        bordercolor: "transparent",
-        steps: [
-          { range: [0, 1], color: "rgb(39,215,74" },
-          { range: [1, 2], color: "rgb(39,215,109" },
-          { range: [2, 3], color: "rgb(39,215,148" },
-          { range: [3, 4], color: "rgb(39,215,177" },
-          { range: [4, 5], color: "rgb(39,215,212" },
-          { range: [5, 6], color: "rgb(39,180,215" },
-          { range: [6, 7], color: "rgb(39,148,215" },
-          { range: [7, 8], color: "rgb(39,118,215" },
-          { range: [8, 9], color: "rgb(39,92,215" }
-
-        ],
-      }
-    }];
-
-    gaugeData = trace3;
-
-    var layout = {
-      width: 600,
-      height: 500,
-      margin: { t: 0, b: 0 }
-    };
-
-    Plotly.newPlot("gauge", gaugeData, layout);
-
-  }
-  // On button click, call refreshData()
-  d3.selectAll("#selDataset").on("change", refreshData);
-
-
-
-  function refreshData() {
-    var dropdownMenu = d3.select("#selDataset");
-    var personsID = dropdownMenu.property("value");
-    console.log(personsID);
-    console.log(data)
-
-    for (var i = 0; i < data.names.length; i++) {
-      if (personsID === data.names[i]) {
-        updatePlots(i);
-        return
-      }
-    }
-  }
-
-});
+// Initialize the dashboard
+init();
