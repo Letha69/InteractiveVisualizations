@@ -79,7 +79,7 @@ function getBarChart(sample) {
     // create layout variable to set plots layout
      
     var layout = {
-      title: "Top 10 OTUs",
+      title: "Top 10 Bacteria Culture Found",
     };  
   
     // create the bar plot
@@ -87,7 +87,7 @@ function getBarChart(sample) {
     }); 
 } 
     
-    // The bubble chart 
+    // The gauge chart 
 function getGaugeChart(sample){
     d3.json("samples.json").then((data) => {
         var metadata = data.metadata;    
@@ -140,6 +140,7 @@ function getGaugeChart(sample){
     }); 
         
 }
+// bubble chart
 function getBubbleChart(sample){
     d3.json("samples.json").then((data) => {
         console.log(data)
