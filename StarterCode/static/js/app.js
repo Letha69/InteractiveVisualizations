@@ -1,5 +1,5 @@
 function buildplot(sample) {
-  d3.json("data/samples.json").then((data) => {
+  d3.json("static/data/samples.json").then((data) => {
     console.log(data)
 
     var wfreq = data.metadata.map(d =>d.wfreq)
@@ -76,7 +76,7 @@ function buildplot(sample) {
 
   //  demographic information
 function getInfo(id) {
-  d3.json("data/samples.json").then((data)=> {
+  d3.json("static/data/samples.json").then((data)=> {
       
     // Display the sample metadata
     var metadata = data.metadata;
@@ -109,7 +109,7 @@ function init(){
   var dropdown = d3.select("#selDataset");
 
   // Use the list of sample names to populate the select options
-  d3.json("data/samples.json").then((data)=>{
+  d3.json("static/data/samples.json").then((data)=>{
     console.log(data)
     var sampleNames = data.names;
 
